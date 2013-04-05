@@ -160,7 +160,7 @@ var XXX_HTTP_Browser_NativeHelpers =
 			
 			if (transportMethod == 'uri')
 			{
-				if (XXX_String.findFirstPosition(uri, '?') == -1)
+				if (XXX_String.findFirstPosition(uri, '?') === false)
 				{
 					uri += '?' + data;
 				}

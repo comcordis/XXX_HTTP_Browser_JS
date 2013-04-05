@@ -8,7 +8,19 @@ var XXX_HTTP_Browser =
 	version: '',
 	platform: '',
 	renderMode: false,
-	language: false,
+
+	languages: [],
+	firstLanguage:
+	{
+		languageCode: 'en',
+		languageString: 'en'
+	},
+	firstNonEnglishLanguage:
+	{
+		languageCode: 'en',
+		languageString: 'en'
+	},
+	
 	engine: '',
 	userAgentString: '',
 	pointerInterface: 'mouse',
@@ -135,8 +147,52 @@ var XXX_HTTP_Browser =
 		this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion)	|| '';
 		this.platform = this.searchString(platformSignatures) || '';
 		this.renderMode = this.deriveRenderMode();
-		this.language = this.parseLanguageCode(navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || navigator.platformLanguage);
 		
+		// Language
+		
+		if (navigator.language)
+		{
+			this.languages.push(this.parseLanguageCode(navigator.language));
+		}
+		
+		if (navigator.userLanguage)
+		{
+			this.languages.push(this.parseLanguageCode(navigator.userLanguage));
+		}
+		
+		if (navigator.browserLanguage)
+		{
+			this.languages.push(this.parseLanguageCode(navigator.browserLanguage));
+		}
+		
+		if (navigator.systemLanguage)
+		{
+			this.languages.push(this.parseLanguageCode(navigator.systemLanguage));
+		}
+		
+		if (navigator.platformLanguage)
+		{
+			this.languages.push(this.parseLanguageCode(navigator.platformLanguage));
+		}
+		
+		// Find first non-english languageCode
+		if (XXX_Array.getFirstLevelItemTotal(this.languages) > 0)
+		{
+			for (var i = 0, iEnd = XXX_Array.getFirstLevelItemTotal(this.languages); i < iEnd; ++i)
+			{
+				var language = this.languages[i];
+				
+				if (language.languageCode != 'en')
+				{
+					this.firstNonEnglishLanguage = language;
+					
+					break;
+				}
+			}
+		}
+		
+		this.firstLanguage = this.languages[0];
+				
 		if (this.browser == 'fireFox' || this.browser == 'camino' || this.browser == 'netscape')
 		{
 			this.engine = 'gecko';
@@ -263,9 +319,7 @@ var XXX_HTTP_Browser =
 		
 		return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
 	},
-	
-	
-				
+			
 	////////////////////
 	// Bookmark
 	////////////////////
