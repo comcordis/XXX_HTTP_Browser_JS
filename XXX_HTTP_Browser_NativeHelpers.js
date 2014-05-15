@@ -15,6 +15,8 @@ var XXX_HTTP_Browser_NativeHelpers =
 			
 			var handler = null;
 			
+			var corsSupport = false;
+			
 			if (!handler && window.XMLHttpRequest)
 			{
 				try
@@ -28,12 +30,26 @@ var XXX_HTTP_Browser_NativeHelpers =
 						handler.overrideMimeType('text/xml');	
 					}
 					*/
+					/*
+					// "withCredentials" only exists on XMLHTTPRequest2 objects.
+					if ("withCredentials" in handler)
+					{
+						corsSupport = true;
+					}*/
 				}
 				catch (e1)
 				{
 					handler = null;
 				}
 			}
+			/*
+			// XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+			if (!handler && typeof XDomainRequest != "undefined")
+			{
+				handler = new XDomainRequest();
+				
+				type = 'XDomainRequest';
+			}*/
 			
 			if (!handler && window.ActiveXObject)
 			{
@@ -81,7 +97,8 @@ var XXX_HTTP_Browser_NativeHelpers =
 				handler =
 				{
 					nativeAsynchronousRequestHandler: handler,
-					type: type
+					type: type,
+					corsSupport: corsSupport
 				};
 			}
 			
@@ -176,7 +193,7 @@ var XXX_HTTP_Browser_NativeHelpers =
 			try
 			{
 				// Open
-				
+					
 					nativeAsynchronousRequestHandler.open((transportMethod == 'body' ? 'POST' : 'GET'), uri, true);
 		
 				// State change handlers
