@@ -3,6 +3,11 @@ var XXX_HTTP_Browser_Page =
 	uri: '',
 	referrerURI: '',
 	
+	elements:
+	{
+		includes: []
+	},
+	
 	initialize: function ()
 	{
 		this.uri = location.href;
@@ -238,22 +243,40 @@ var XXX_HTTP_Browser_Page =
 		}
 	},
 	
-	includeFile: function (uri, fileType, callback)
+	removeIncludeFile: function (ID)
+	{
+		var tempElement = XXX_DOM.get(ID);
+				
+		if (tempElement)
+		{
+			XXX_DOM.remove(tempElement);
+		}
+	},
+	
+	includeFile: function (uri, fileType, callback, ID)
 	{
 		var fileElement = false;
 				
 		switch (fileType)
 		{
 			case 'js':
-				fileElement = document.createElement('script');
-				fileElement.setAttribute('type', 'text/javascript');
-				fileElement.setAttribute('src', uri);
+				fileElement = XXX_DOM.createElementNode('script');
+				fileElement.type = 'text/javascript';
+				fileElement.src = uri;
+				if (ID != '')
+				{
+					fileElement.id = ID;
+				}
 				break;
 			case 'css':
-				fileElement = document.createElement('link');
-				fileElement.setAttribute('rel', 'stylesheet');
-				fileElement.setAttribute('type', 'text/css');
-				fileElement.setAttribute('href', uri);
+				fileElement = XXX_DOM.createElementNode('link');
+				fileElement.rel = 'stylesheet';
+				fileElement.type = 'text/css';
+				fileElement.href = uri;
+				if (ID != '')
+				{
+					fileElement.id = ID;
+				}
 				break;
 		}
 				
@@ -262,25 +285,23 @@ var XXX_HTTP_Browser_Page =
 			this.attachCompletedCallback(fileElement, callback);
 		}
 		
-		var head = this.documentBody.head;
-		
-		if (!head)
-		{
-			head = this.documentBody.childNodes[0];
-		}
-				
 		if (fileElement !== false)
 		{
-			head.appendChild(fileElement);
+			XXX_DOM.appendChildNode(XXX_DOM.getBody(), fileElement);
 		}
+		
+		this.elements.includes.push(fileElement);
+		
+		return XXX_Array.getFirstLevelItemTotal(this.elements.includes) - 1;
 	},
-	includeCSS: function (uri, callback)
+	includeCSS: function (uri, callback, ID)
 	{
-		this.includeFile(uri, 'css', callback);
+		return this.includeFile(uri, 'css', callback, ID);
 	},
-	includeJS: function (uri, callback)
+	includeJS: function (uri, callback, ID)
 	{
-		this.includeFile(uri, 'js', callback);
+		XXX_JS.errorNotification(1, 'include JS');
+		return this.includeFile(uri, 'js', callback, ID);
 	}
 };
 
