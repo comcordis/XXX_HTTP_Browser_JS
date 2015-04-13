@@ -1,0 +1,6 @@
+project:XXX_HTTP_Browser_JS
+deployEnvironment:development
+checkout:master
+commitHash:a5d6749f591d3ea4c46aa20705ee952981caf97d
+timestamp:2015-04-13T09:44:33Z
+deployer:operations
